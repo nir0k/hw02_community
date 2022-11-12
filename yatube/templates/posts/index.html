@@ -1,12 +1,11 @@
 <!-- templates/base.html -->
-<!DOCTYPE html> <!-- Используется html 5 версии -->
+<!DOCTYPE html>
 {% extends 'base.html' %}
 {% block title %}
   <title>{{ context.title }}</title>
 </head>
 {% endblock %}
 {% block content %}
-<!-- класс py-5 создает отступы сверху и снизу блока -->
 <div class="container py-5">     
   <h1>{{ title }}</h1>
   <article>
@@ -26,7 +25,6 @@
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %} 
   </article>
-  <!-- под последним постом нет линии -->
 </div>  
 {% endblock %}
     
