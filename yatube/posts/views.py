@@ -8,7 +8,7 @@ def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     title = f'Записи сообщества {group}'
     template = 'posts/group_list.html'
-    posts = group.post_set.all()
+    posts = group.posts.all().order_by('-pub_date')[:POSTS_PER_PAGE]
     return render(
         request,
         template,
