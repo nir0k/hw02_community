@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 {% extends 'base.html' %}
+<title>
 {% block title %}
-  <title>{{ context.title }}</title>
-</head>
+  {{ context.title }}
 {% endblock %}
+</title>
 {% block content %}
 <div class="container py-5">     
   <h1>{{ title }}</h1>

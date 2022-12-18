@@ -28,3 +28,6 @@ class Post(models.Model):
         max_length=200,
         related_name='posts'
     )
+
+    def __str__(self):
+        return str(self.text)
