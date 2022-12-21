@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-from .models import Post, Group
+from .models import Post, Group, User
 
 POSTS_PER_PAGE = 10
 
@@ -34,3 +34,31 @@ def index(request):
         template,
         context
     )
+
+
+def profile(request, username):
+    author = get_object_or_404(User, username=username)
+    post_list = author.author_posts.all().order_by('-pub_date')
+    paginator = Paginator(post_list, POSTS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    fullname = author.first_name + ' ' + author.last_name
+    title = f'Профайл пользователя {fullname}'
+    context = {
+        'title': title,
+        'fullname': fullname,
+        'page_obj': page_obj,
+        'posts_count': post_list.count(),
+    }
+    return render(request, 'posts/profile.html', context)
+
+
+def post_detail(request, post_id):
+    # Здесь код запроса к модели и создание словаря контекста
+    post = get_object_or_404(Post, id=post_id)
+    posts_count = Post.objects.filter(author=post.author).count()
+    context = {
+        'post': post,
+        'posts_count': posts_count,
+    }
+    return render(request, 'posts/post_detail.html', context)
