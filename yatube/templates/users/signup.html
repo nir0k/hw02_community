@@ -8,8 +8,7 @@
         <div class="card-header">
           Зарегистрироваться
         </div>
-        <div class="card-body">
-          {# Этот блок будет показан, если в форме есть ошибки #}
+        <div class="card-body">          
           {% if form.errors %}
             {% for field in form %}
               {% for error in field.errors %}            

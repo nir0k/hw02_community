@@ -1,8 +1,18 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Group, User
+from .forms import PostForm
+
 
 POSTS_PER_PAGE = 10
+
+
+def authorized_only(func):    
+    def check_user(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return func(request, *args, **kwargs)
+        return redirect('/auth/login/')
+    return check_user
 
 
 def group_posts(request, slug):
@@ -28,7 +38,6 @@ def index(request):
         'title': title,
         'page_obj': page_obj,
     }
-    # posts = Post.objects.order_by('-pub_date')[:POSTS_PER_PAGE]
     return render(
         request,
         template,
@@ -54,7 +63,6 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-    # Здесь код запроса к модели и создание словаря контекста
     post = get_object_or_404(Post, id=post_id)
     posts_count = Post.objects.filter(author=post.author).count()
     context = {
@@ -62,3 +70,37 @@ def post_detail(request, post_id):
         'posts_count': posts_count,
     }
     return render(request, 'posts/post_detail.html', context)
+
+
+@authorized_only
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('posts:profile', request.user)
+        return render(
+            request,
+            'posts/create_post.html',
+            {'form': form}
+        )
+    form = PostForm()
+    return render(
+        request,
+        'posts/create_post.html',
+        {'form': form},
+    )
+
+
+@authorized_only
+def post_edit(request, post_id):
+    is_edit = True
+    post = get_object_or_404(Post, id=post_id)
+    form = PostForm(instance=post)
+    context = {
+        'form': form,
+        'is_edit': is_edit,
+    }
+    return render(request, 'posts/create_post.html', context)
