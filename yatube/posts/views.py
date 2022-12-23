@@ -3,11 +3,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Group, User
 from .forms import PostForm
 
-
 POSTS_PER_PAGE = 10
 
 
-def authorized_only(func):    
+def authorized_only(func):
     def check_user(request, *args, **kwargs):
         if request.user.is_authenticated:
             return func(request, *args, **kwargs)
